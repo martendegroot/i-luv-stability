@@ -5,12 +5,13 @@ import { faker } from "@faker-js/faker";
 import styles from "../styles/Home.module.css";
 
 export default function Home() {
-  // useEffect(() => {
-  //   const errorInterval = window.setInterval(() => {
-  //     throw Error(faker.hacker.phrase());
-  //   }, 1000);
-  //   return () => clearInterval(errorInterval);
-  // }, []);
+  useEffect(() => {
+    const errorInterval = window.setInterval(() => {
+      throw Error(faker.hacker.phrase());
+    }, 1000);
+
+    return () => clearInterval(errorInterval);
+  }, []);
 
   return (
     <div className={styles.container}>
