@@ -30,7 +30,7 @@ export default function handler(
 
   setTimeout(() => {
     try {
-      foo();
+      new Error("lets crash this");
     } catch (e) {
       Sentry.captureException(e);
     } finally {
