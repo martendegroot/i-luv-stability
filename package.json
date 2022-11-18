@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@sentry/node": "^7.20.0",
     "@sentry/react": "^7.20.0",
     "@sentry/tracing": "^7.20.0",
     "@types/node": "18.11.9",

@@ -1,10 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import * as Sentry from "@sentry/react";
-
-type Data = {
-  name: string;
-};
+import * as Sentry from "@sentry/node";
 
 Sentry.init({
   dsn: "https://86f725db0347405faba65639f4d88be4@o1191512.ingest.sentry.io/6312899",
@@ -18,6 +14,10 @@ Sentry.init({
     return event;
   },
 });
+
+type Data = {
+  sent: string;
+};
 
 export default function handler(
   req: NextApiRequest,
@@ -36,7 +36,7 @@ export default function handler(
     } finally {
       transaction.finish();
     }
-  }, 99);
+  }, 100);
 
-  res.status(200).json({ name: "John Doe" });
+  res.status(200).json({ sent: "something" });
 }
