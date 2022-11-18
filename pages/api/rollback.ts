@@ -1,42 +1,41 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import * as Sentry from "@sentry/node";
+import request from "request";
 
-Sentry.init({
-  dsn: "https://86f725db0347405faba65639f4d88be4@o1191512.ingest.sentry.io/6312899",
-  beforeSend: function (event, hint) {
-    const exception = hint.originalException;
+const PRODUCTION_URL = "i-luv-stability.vercel.app";
 
-    if (exception instanceof Error) {
-      event.fingerprint = ["This is a backend response"];
-    }
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  const options = {
+    method: "GET",
+    url: "https://api.vercel.com/v6/deployments?app=i-luv-stability",
+    headers: {
+      Authorization: `Bearer ${process.env["VERCEL_TOKEN"]}`,
+      "Content-Type": "application/json",
+    },
+  };
 
-    return event;
-  },
-});
+  request(options, function (error, response) {
+    if (error) throw new Error(error);
 
-type Data = {
-  sent: string;
-};
+    const { deployments } = JSON.parse(response.body);
 
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
-  const transaction = Sentry.startTransaction({
-    op: "test",
-    name: "My First Test Transaction",
+    const rollbackVersionId = deployments[2].uid;
+
+    const options = {
+      method: "POST",
+      url: `https://api.vercel.com/v2/deployments/${rollbackVersionId}/aliases`,
+      headers: {
+        Authorization: `Bearer ${process.env["VERCEL_TOKEN"]}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        alias: PRODUCTION_URL,
+      }),
+    };
+
+    request(options, function (error, response) {
+      if (error) throw new Error(error);
+      res.status(200);
+    });
   });
-
-  setTimeout(() => {
-    try {
-      new Error("lets crash this");
-    } catch (e) {
-      Sentry.captureException(e);
-    } finally {
-      transaction.finish();
-    }
-  }, 100);
-
-  res.status(200).json({ sent: "something" });
 }
