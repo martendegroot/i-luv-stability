@@ -35,7 +35,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
     request(options, function (error, response) {
       if (error) throw new Error(error);
-      res.status(200).json({ rollback: true });
+      res.status(200).json({ rollbackTo: rollbackVersionId });
     });
   });
 }
