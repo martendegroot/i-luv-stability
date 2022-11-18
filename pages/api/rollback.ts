@@ -19,7 +19,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const { deployments } = JSON.parse(response.body);
 
-    const rollbackVersionId = deployments[2].uid;
+    const rollbackVersionId = deployments[1].uid;
 
     const options = {
       method: "POST",
